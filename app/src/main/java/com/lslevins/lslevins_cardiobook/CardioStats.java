@@ -1,12 +1,13 @@
 package com.lslevins.lslevins_cardiobook;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * Created by Luke Slevinsky on 2019-01-10.
  */
 
-public class CardioStats {
+public class CardioStats implements Serializable {
     private LocalDateTime dateTime;
     private int systolicPressure;
     private int diastolicPressure;

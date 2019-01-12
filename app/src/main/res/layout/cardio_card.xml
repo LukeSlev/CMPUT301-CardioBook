@@ -54,6 +54,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="TextView"
+        android:backgroundTint="@color/grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -65,6 +66,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:text="TextView"
+        android:backgroundTint="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/diaPresLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sysPresLabel" />
@@ -76,6 +78,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:text="TextView"
+        android:backgroundTint="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/bpm_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/diaPresLabel" />
@@ -87,6 +90,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="TextView"
+        android:backgroundTint="@color/grey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bpm_label" />
@@ -114,7 +118,7 @@
         app:srcCompat="@android:drawable/ic_menu_edit" />
 
     <TextView
-        android:id="@+id/comment"
+        android:id="@+id/Label"
         android:layout_width="194dp"
         android:layout_height="136dp"
         android:layout_marginStart="4dp"
@@ -125,11 +129,12 @@
         tools:text="Comment" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Comment"
+        android:backgroundTint="@color/grey"
         android:textColor="@android:color/black"
         android:textStyle="bold"
         app:layout_constraintBaseline_toBaselineOf="@+id/sysPresLabel"

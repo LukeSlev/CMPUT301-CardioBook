@@ -1,5 +1,6 @@
 package com.lslevins.lslevins_cardiobook;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.time.LocalDateTime;
@@ -19,7 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements CardioListAdapter.ItemClickListener{
-    private static final String TAG = "MainActivity";
+    private static final String TAG = MainActivity.class.getSimpleName();
+    public static final String REQUEST_MESSAGE = "com.lslevins.lslevins.REQUEST";
+
+    public static final int NEW = 1;
+    public static final int EDIT = 2;
+
+
     private RecyclerView                cardioRecyclerView;
     private CardioListAdapter       cardioStatsAdapter;
     private RecyclerView.LayoutManager  mLayoutManager;
@@ -52,10 +60,27 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
         addCardioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(getApplicationContext(), AddCardioStatActivity.class);
+                intent.putExtra(REQUEST_MESSAGE, NEW);
+                startActivityForResult(intent, NEW);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
+        // Check which request it is that we're responding to
+        if (requestCode == NEW) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(getApplicationContext(),"Back from that NEWNEW",Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == EDIT) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(getApplicationContext(),"Back from that EDIT",Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">lslevins-CardioBook</string>
+    <string name="diastolic_pressure">Diastolic Pressure</string>
+    <string name="systolic_pressure">Systolic Pressure</string>
+    <string name="beats_per_minute">BPM</string>
+    <string name="comment">Comment</string>
+</resources>

@@ -21,14 +21,14 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
 
     private List<CardioStats> cardioStats = new ArrayList<CardioStats>();
     private ItemClickListener mClickListener;
-    public DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
-        public TextView sysPres, diaPres, bpm, date;
+        public TextView sysPres, diaPres, bpm, date, comment;
 
         public MyViewHolder(View v) {
             super(v);
@@ -36,6 +36,7 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
             diaPres = (TextView) v.findViewById(R.id.diaPres);
             bpm = (TextView) v.findViewById(R.id.bpm);
             date = (TextView) v.findViewById(R.id.date);
+            comment = (TextView) v.findViewById(R.id.comment);
 
             v.setOnClickListener(this);
         }
@@ -74,6 +75,7 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
         holder.diaPres.setText(Integer.toString(cardioStats.get(position).getDiastolicPressure()));
         holder.bpm.setText(Integer.toString(cardioStats.get(position).getBpm()));
         holder.date.setText(dateTime);
+        holder.comment.setText(cardioStats.get(position).getComment());
     }
 
     // convenience method for getting data at click position

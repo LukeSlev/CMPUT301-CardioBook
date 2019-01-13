@@ -1,5 +1,8 @@
 package com.lslevins.lslevins_cardiobook;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -7,7 +10,7 @@ import java.time.LocalDateTime;
  * Created by Luke Slevinsky on 2019-01-10.
  */
 
-public class CardioStats implements Serializable {
+public class CardioStats {
     private LocalDateTime dateTime;
     private int systolicPressure;
     private int diastolicPressure;
@@ -15,6 +18,8 @@ public class CardioStats implements Serializable {
     private String comment;
 
     // Constructors
+
+    public CardioStats() { ;}
 
     public CardioStats(LocalDateTime dateTime, int sysPres, int diaPres, int bpm, String comment ) {
         setBpm(bpm);
@@ -66,4 +71,5 @@ public class CardioStats implements Serializable {
         return "Date " + getDateTime().toString() + " SP " + Integer.toString(getSystolicPressure())
                 + " DP "  + Integer.toString(getDiastolicPressure()) + " BPM " + Integer.toString(getBpm());
     }
+
 }

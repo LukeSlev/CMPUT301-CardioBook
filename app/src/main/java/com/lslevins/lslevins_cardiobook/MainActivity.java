@@ -35,7 +35,10 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
 
     public void setDemoData() {
         cardioStats.add(new CardioStats(LocalDateTime.now(),1,2,3,"asd"));
-        cardioStats.add(new CardioStats(LocalDateTime.now(),111,322222,3333,"Oh my goodness"));
+        cardioStats.add(new CardioStats(LocalDateTime.now(),22,222,222,"Oh my goodness"));
+        cardioStats.add(new CardioStats(LocalDateTime.now(),333,3333,33333,"sfasfasfasf"));
+        cardioStats.add(new CardioStats(LocalDateTime.now(),4444,4444444,44444444,"hhashrshahr"));
+        cardioStats.add(new CardioStats(LocalDateTime.now(),555,55555,55555,"Oh goodness"));
     }
 
     @Override
@@ -67,6 +70,21 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
         });
     }
 
+    protected void setStats(Intent intent) {
+        int systolic = intent.getIntExtra(AddCardioStatActivity.SYSTOLIC,-1);
+        int diastolic = intent.getIntExtra(AddCardioStatActivity.DIASTOLIC,-1);
+        int bpm = intent.getIntExtra(AddCardioStatActivity.BPM,-1);
+        LocalDateTime dateTime = LocalDateTime.parse(intent.getStringExtra(AddCardioStatActivity.DATETIME));
+        String comment = (String) intent.getStringExtra(AddCardioStatActivity.COMMENT);
+        Log.d(TAG, "setStats: " + comment);
+        CardioStats cs = new CardioStats(dateTime,systolic,diastolic,bpm,comment);
+        if (cs == null) {
+            Log.d(TAG, "setStats: FAAKKKKKK");
+        } else {
+            cardioStats.add(cs);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
         // Check which request it is that we're responding to
@@ -74,6 +92,10 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 Toast.makeText(getApplicationContext(),"Back from that NEWNEW",Toast.LENGTH_SHORT).show();
+                setStats(resultIntent);
+                Log.d(TAG, "onActivityResult: Added new stat");
+                cardioStatsAdapter.notifyDataSetChanged();
+                Log.d(TAG, "onActivityResult: "+cardioStats.get(5).toString());
             }
         } else if (requestCode == EDIT) {
             // Make sure the request was successful

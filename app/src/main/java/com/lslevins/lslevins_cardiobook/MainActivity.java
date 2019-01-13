@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
         cardioStatsAdapter = new CardioListAdapter(cardioStats);
         cardioStatsAdapter.setClickListener(this);
         cardioRecyclerView.setAdapter(cardioStatsAdapter);
-        setDemoData();
 
         // Button to be used to add entries
         FloatingActionButton addCardioButton = (FloatingActionButton) findViewById(R.id.fab);

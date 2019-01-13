@@ -3,11 +3,8 @@ package com.lslevins.lslevins_cardiobook;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,11 +13,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -140,13 +137,13 @@ public class AddCardioStatActivity extends AppCompatActivity {
         });
         date.addTextChangedListener(new TextValidator(date) {
             @Override public void validate(TextView textView, String text) {
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 /* Validation code here */
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
                 try {
-                    sdf.parse(text);
+                    LocalDate.parse(text, dtf);
                     dateCheckBox.setChecked(true);
-                } catch (ParseException e) {
-                    date.setError("Please a valid date in the format yyyy-mm-dd");
+                } catch (DateTimeParseException e) {
+                    date.setError("Please a valid time in the format hh:mm");
                     dateCheckBox.setChecked(false);
                 }
             }

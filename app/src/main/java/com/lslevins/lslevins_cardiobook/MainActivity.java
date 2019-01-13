@@ -1,5 +1,6 @@
 package com.lslevins.lslevins_cardiobook;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -27,9 +28,9 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
     public static final int NEW = 1;
     public static final int EDIT = 2;
 
-
+    private Context                     mContext;
     private RecyclerView                cardioRecyclerView;
-    private CardioListAdapter       cardioStatsAdapter;
+    private CardioListAdapter           cardioStatsAdapter;
     private RecyclerView.LayoutManager  mLayoutManager;
     private List<CardioStats> cardioStats = new ArrayList<CardioStats>();
 
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mContext = getApplicationContext();
+
         cardioRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
         // use a linear layout manager
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
         addCardioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AddCardioStatActivity.class);
+                Intent intent = new Intent(mContext, AddCardioStatActivity.class);
                 intent.putExtra(REQUEST_MESSAGE, NEW);
                 startActivityForResult(intent, NEW);
             }
@@ -71,17 +74,18 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
     }
 
     protected void setStats(Intent intent) {
+        int position = 0;
         int systolic = intent.getIntExtra(AddCardioStatActivity.SYSTOLIC,-1);
         int diastolic = intent.getIntExtra(AddCardioStatActivity.DIASTOLIC,-1);
         int bpm = intent.getIntExtra(AddCardioStatActivity.BPM,-1);
         LocalDateTime dateTime = LocalDateTime.parse(intent.getStringExtra(AddCardioStatActivity.DATETIME));
-        String comment = (String) intent.getStringExtra(AddCardioStatActivity.COMMENT);
+        String comment = intent.getStringExtra(AddCardioStatActivity.COMMENT);
         Log.d(TAG, "setStats: " + comment);
         CardioStats cs = new CardioStats(dateTime,systolic,diastolic,bpm,comment);
         if (cs == null) {
             Log.d(TAG, "setStats: FAAKKKKKK");
         } else {
-            cardioStats.add(cs);
+            cardioStats.add(position,cs);
         }
     }
 
@@ -91,16 +95,17 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
         if (requestCode == NEW) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                Toast.makeText(getApplicationContext(),"Back from that NEWNEW",Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext,"Back from that NEWNEW",Toast.LENGTH_SHORT).show();
                 setStats(resultIntent);
                 Log.d(TAG, "onActivityResult: Added new stat");
-                cardioStatsAdapter.notifyDataSetChanged();
-                Log.d(TAG, "onActivityResult: "+cardioStats.get(5).toString());
+                cardioStatsAdapter.notifyItemInserted(0);
+                cardioRecyclerView.scrollToPosition(0);
+
             }
         } else if (requestCode == EDIT) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                Toast.makeText(getApplicationContext(),"Back from that EDIT",Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext,"Back from that EDIT",Toast.LENGTH_SHORT).show();
             }
         }
     }

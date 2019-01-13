@@ -45,7 +45,7 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/checkBox"
+        app:layout_constraintStart_toEndOf="@+id/sysCheckBox"
         app:layout_constraintTop_toBottomOf="@+id/addTitle" />
 
     <EditText
@@ -59,7 +59,7 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/checkBox2"
+        app:layout_constraintStart_toEndOf="@+id/diaCheckBox"
         app:layout_constraintTop_toBottomOf="@+id/editSysPres" />
 
     <EditText
@@ -73,7 +73,7 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/checkBox3"
+        app:layout_constraintStart_toEndOf="@+id/bpmCheckBox"
         app:layout_constraintTop_toBottomOf="@+id/editDiaPres" />
 
     <EditText
@@ -87,7 +87,7 @@
         android:inputType="date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/checkBox4"
+        app:layout_constraintStart_toEndOf="@+id/dateCheckBox"
         app:layout_constraintTop_toBottomOf="@+id/editBPM" />
 
     <EditText
@@ -101,54 +101,59 @@
         android:inputType="datetime"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/checkBox5"
+        app:layout_constraintStart_toEndOf="@+id/timeCheckBox"
         app:layout_constraintTop_toBottomOf="@+id/editDate" />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/sysCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:clickable="false"
         app:layout_constraintBaseline_toBaselineOf="@+id/editSysPres"
         app:layout_constraintEnd_toStartOf="@+id/editSysPres"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <CheckBox
-        android:id="@+id/checkBox2"
+        android:id="@+id/diaCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:clickable="false"
         app:layout_constraintBaseline_toBaselineOf="@+id/editDiaPres"
         app:layout_constraintEnd_toStartOf="@+id/editDiaPres"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <CheckBox
-        android:id="@+id/checkBox3"
+        android:id="@+id/bpmCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:clickable="false"
         app:layout_constraintBaseline_toBaselineOf="@+id/editBPM"
         app:layout_constraintEnd_toStartOf="@+id/editBPM"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <CheckBox
-        android:id="@+id/checkBox4"
+        android:id="@+id/dateCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:clickable="false"
         app:layout_constraintBaseline_toBaselineOf="@+id/editDate"
         app:layout_constraintEnd_toStartOf="@+id/editDate"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <CheckBox
-        android:id="@+id/checkBox5"
+        android:id="@+id/timeCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:clickable="false"
         app:layout_constraintBaseline_toBaselineOf="@+id/editTime"
         app:layout_constraintEnd_toStartOf="@+id/editTime"
         app:layout_constraintHorizontal_bias="0.5"

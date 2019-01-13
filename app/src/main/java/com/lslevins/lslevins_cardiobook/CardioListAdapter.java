@@ -1,11 +1,14 @@
 package com.lslevins.lslevins_cardiobook;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +21,7 @@ import java.util.List;
 
 public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.MyViewHolder> {
     private static final String TAG = "CardioListAdapter";
-
+    private Context mContext;
     private List<CardioStats> cardioStats = new ArrayList<CardioStats>();
     private ItemClickListener mClickListener;
     public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -29,6 +32,7 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
         public TextView sysPres, diaPres, bpm, date, comment;
+        public ImageButton edit, delete;
 
         public MyViewHolder(View v) {
             super(v);
@@ -37,6 +41,8 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
             bpm = (TextView) v.findViewById(R.id.bpm);
             date = (TextView) v.findViewById(R.id.date);
             comment = (TextView) v.findViewById(R.id.comment);
+            edit = (ImageButton) v.findViewById(R.id.editButton);
+            delete = (ImageButton) v.findViewById(R.id.deleteButton);
 
             v.setOnClickListener(this);
         }
@@ -54,8 +60,9 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
 
     // Create new views (invoked by the layout manager)
     @Override
-    public CardioListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                                       int viewType) {
+    public CardioListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        mContext = parent.getContext();
+
         // create a new view
         View v = (View) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.cardio_card, parent, false);
@@ -66,7 +73,7 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(MyViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         String dateTime = formatDateTime(cardioStats.get(position).getDateTime());
@@ -76,6 +83,26 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
         holder.bpm.setText(Integer.toString(cardioStats.get(position).getBpm()));
         holder.date.setText(dateTime);
         holder.comment.setText(cardioStats.get(position).getComment());
+
+        holder.edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: EDIIIIIIIT");
+            }
+        });
+
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: DELETE");
+                // Remove the item on remove/button click
+                cardioStats.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position,cardioStats.size());
+
+                Toast.makeText(mContext,"Removed entry" ,Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // convenience method for getting data at click position

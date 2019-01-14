@@ -1,8 +1,5 @@
 package com.lslevins.lslevins_cardiobook;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -10,16 +7,26 @@ import java.time.LocalDateTime;
  * Created by Luke Slevinsky on 2019-01-10.
  */
 
-public class CardioStats {
+public class CardioStats implements Serializable{
     private LocalDateTime dateTime;
     private int systolicPressure;
     private int diastolicPressure;
     private int bpm;
     private String comment;
 
+    private Boolean systolicFlag= false;
+    private Boolean diastolicFlag= false;
+
+    private int systolicLow= 90;
+    private int systolicHigh= 140;
+    private int diastolicLow= 60;
+    private int diastolicHigh= 90;
+
+
+
     // Constructors
 
-    public CardioStats() { ;}
+    public CardioStats() {}
 
     public CardioStats(LocalDateTime dateTime, int sysPres, int diaPres, int bpm, String comment ) {
         setBpm(bpm);
@@ -43,6 +50,11 @@ public class CardioStats {
     }
     public void setSystolicPressure(int systolicPressure) {
         this.systolicPressure = systolicPressure;
+        if (systolicPressure > systolicHigh || systolicPressure < systolicLow) {
+            systolicFlag = true;
+        } else {
+            systolicFlag = false;
+        }
     }
 
     public int getDiastolicPressure() {
@@ -50,6 +62,11 @@ public class CardioStats {
     }
     public void setDiastolicPressure(int diastolicPressure) {
         this.diastolicPressure = diastolicPressure;
+        if (diastolicPressure > diastolicHigh || diastolicPressure < diastolicLow) {
+            diastolicFlag = true;
+        } else {
+            diastolicFlag = false;
+        }
     }
 
     public int getBpm() {
@@ -69,7 +86,15 @@ public class CardioStats {
     @Override
     public String toString() {
         return "Date " + getDateTime().toString() + " SP " + Integer.toString(getSystolicPressure())
-                + " DP "  + Integer.toString(getDiastolicPressure()) + " BPM " + Integer.toString(getBpm());
+                + " DP "  + Integer.toString(getDiastolicPressure()) + " BPM "
+                + Integer.toString(getBpm()) + " Comment " + getComment();
     }
 
+    public Boolean getSystolicFlag() {
+        return systolicFlag;
+    }
+
+    public Boolean getDiastolicFlag() {
+        return diastolicFlag;
+    }
 }

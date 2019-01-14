@@ -1,6 +1,10 @@
 package com.lslevins.lslevins_cardiobook;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,9 +25,11 @@ import java.util.List;
 
 public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.MyViewHolder> {
     private static final String TAG = "CardioListAdapter";
+    public static final String POSITION = "com.lslevins.lslevins.POSITION";
     private Context mContext;
     private List<CardioStats> cardioStats = new ArrayList<CardioStats>();
     private ItemClickListener mClickListener;
+    private ColorStateList oldColors;
     public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     // Provide a reference to the views for each data item
@@ -43,6 +49,8 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
             comment = (TextView) v.findViewById(R.id.comment);
             edit = (ImageButton) v.findViewById(R.id.editButton);
             delete = (ImageButton) v.findViewById(R.id.deleteButton);
+
+            oldColors =  sysPres.getTextColors();
 
             v.setOnClickListener(this);
         }
@@ -73,7 +81,7 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(MyViewHolder holder, final int position) {
+    public void onBindViewHolder(final MyViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         String dateTime = formatDateTime(cardioStats.get(position).getDateTime());
@@ -84,10 +92,30 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
         holder.date.setText(dateTime);
         holder.comment.setText(cardioStats.get(position).getComment());
 
+        if (cardioStats.get(position).getSystolicFlag()) {
+            holder.sysPres.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            holder.sysPres.setBackground(ContextCompat.getDrawable(mContext,R.drawable.accent_rounded_background));
+        } else {
+            holder.sysPres.setTextColor(oldColors);
+            holder.sysPres.setBackground(ContextCompat.getDrawable(mContext,R.drawable.white_rounded_background));
+        }
+        if (cardioStats.get(position).getDiastolicFlag()) {
+            holder.diaPres.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            holder.diaPres.setBackground(ContextCompat.getDrawable(mContext,R.drawable.accent_rounded_background));
+        } else {
+            holder.diaPres.setTextColor(oldColors);
+            holder.diaPres.setBackground(ContextCompat.getDrawable(mContext,R.drawable.white_rounded_background));
+        }
+
         holder.edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick: EDIIIIIIIT");
+                Log.d(TAG, "onClick: EDIT:"+holder.getAdapterPosition());
+                Intent intent = new Intent(mContext, AddCardioStatActivity.class);
+                intent.putExtra(MainActivity.REQUEST_MESSAGE, MainActivity.EDIT);
+                intent.putExtra(POSITION,holder.getAdapterPosition());
+                AddCardioStatActivity.updateIntentStats(intent,cardioStats.get(holder.getAdapterPosition()));
+                ((Activity) mContext).startActivityForResult(intent, MainActivity.EDIT);
             }
         });
 
@@ -96,9 +124,9 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
             public void onClick(View view) {
                 Log.d(TAG, "onClick: DELETE");
                 // Remove the item on remove/button click
-                cardioStats.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position,cardioStats.size());
+                cardioStats.remove(holder.getAdapterPosition());
+                notifyItemRemoved(holder.getAdapterPosition());
+                notifyItemRangeChanged(holder.getAdapterPosition(),cardioStats.size());
 
                 Toast.makeText(mContext,"Removed entry" ,Toast.LENGTH_SHORT).show();
             }

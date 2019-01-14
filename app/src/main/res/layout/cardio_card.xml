@@ -11,41 +11,32 @@
         android:id="@+id/sysPresLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
         android:text="@string/systolic_pressure"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/sysPres"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/diaPresLabel"
+        app:layout_constraintStart_toStartOf="@+id/sysPres" />
 
     <TextView
         android:id="@+id/diaPresLabel"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/diastolic_pressure"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/diaPres"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sysPres" />
+        app:layout_constraintStart_toStartOf="@+id/diaPres"
+        app:layout_constraintTop_toBottomOf="@+id/date" />
 
     <TextView
         android:id="@+id/bpm_label"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="wrap_content"
         android:text="@string/beats_per_minute"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/bpm"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/diaPres" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/diaPresLabel"
+        app:layout_constraintStart_toStartOf="@+id/bpm" />
 
     <TextView
         android:id="@+id/date"
@@ -61,44 +52,35 @@
 
     <TextView
         android:id="@+id/sysPres"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="113dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/white_rounded_background"
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/diaPresLabel"
-        app:layout_constraintEnd_toStartOf="@+id/comment"
+        app:layout_constraintEnd_toStartOf="@+id/diaPres"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sysPresLabel" />
 
     <TextView
         android:id="@+id/diaPres"
-        android:layout_width="0dp"
+        android:layout_width="118dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
         android:background="@drawable/white_rounded_background"
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/bpm_label"
-        app:layout_constraintEnd_toStartOf="@+id/comment"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/bpm"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/sysPres"
         app:layout_constraintTop_toBottomOf="@+id/diaPresLabel" />
 
     <TextView
         android:id="@+id/bpm"
-        android:layout_width="0dp"
+        android:layout_width="108dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
         android:background="@drawable/white_rounded_background"
         android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/comment"
-        app:layout_constraintEnd_toStartOf="@+id/comment"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/diaPres"
         app:layout_constraintTop_toBottomOf="@+id/bpm_label" />
 
     <ImageButton
@@ -126,27 +108,24 @@
     <TextView
         android:id="@+id/comment"
         android:layout_width="0dp"
-        android:layout_height="136dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="22dp"
         android:background="@drawable/white_rounded_background"
         android:text="TextView"
         android:textAlignment="viewStart"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/diaPresLabel"
-        app:layout_constraintTop_toBottomOf="@+id/date"
+        app:layout_constraintEnd_toEndOf="@+id/bpm"
+        app:layout_constraintStart_toStartOf="@+id/commentLabel"
+        app:layout_constraintTop_toBottomOf="@+id/commentLabel"
         tools:text="Comment" />
 
     <TextView
         android:id="@+id/commentLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
         android:text="Comment"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/sysPresLabel"
-        app:layout_constraintStart_toEndOf="@+id/sysPresLabel" />
+        app:layout_constraintStart_toStartOf="@+id/sysPres"
+        app:layout_constraintTop_toBottomOf="@+id/sysPres" />
 
 </android.support.constraint.ConstraintLayout>

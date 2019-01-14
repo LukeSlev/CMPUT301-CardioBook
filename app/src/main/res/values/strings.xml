@@ -4,4 +4,5 @@
     <string name="systolic_pressure">Systolic Pressure</string>
     <string name="beats_per_minute">BPM</string>
     <string name="comment">Comment</string>
+    <string name="empty_message">Your CardioBook is empty.\n Use the button below to add some measurements!</string>
 </resources>

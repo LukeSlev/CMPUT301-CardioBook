@@ -31,6 +31,7 @@ public class AddCardioStatActivity extends AppCompatActivity {
 
     private Context mContext;
     private int requestType;
+    private int position;
     private EditText systolic;
     private EditText diastolic;
     private EditText date;
@@ -80,14 +81,18 @@ public class AddCardioStatActivity extends AppCompatActivity {
 
         switch (requestType) {
             case MainActivity.NEW:
+                position=0;
                 break;
             case MainActivity.EDIT:
-                cardioStats = (CardioStats) intent.getSerializableExtra(CardioStats.class.getSimpleName());
+                position = intent.getIntExtra(CardioListAdapter.POSITION,0);
+                cardioStats = MainActivity.setStats(intent);
+                Log.d(TAG, "onCreate: "+cardioStats.toString());
 
                 systolic.setText(String.format("%d", cardioStats.getSystolicPressure()));
                 diastolic.setText(String.format("%d", cardioStats.getDiastolicPressure()));
+                bpm.setText(String.format("%d", cardioStats.getBpm()));
                 date.setText(cardioStats.getDateTime().format(dateFormat));
-                date.setText(cardioStats.getDateTime().format(timeFormat));
+                time.setText(cardioStats.getDateTime().format(timeFormat));
                 comment.setText(cardioStats.getComment());
                 break;
             default:
@@ -182,7 +187,7 @@ public class AddCardioStatActivity extends AppCompatActivity {
         return false;
     }
 
-    protected void setStats() {
+    protected void updateStats() {
         LocalDateTime dateTime = LocalDateTime.parse(date.getText().toString() + " " + time.getText().toString(), CardioListAdapter.dateFormatter);
         debugStats(dateTime);
         cardioStats.setSystolicPressure(Integer.parseInt(systolic.getText().toString()));
@@ -193,12 +198,13 @@ public class AddCardioStatActivity extends AppCompatActivity {
 
     }
 
-    protected void updateIntentStats(Intent intent) {
-        intent.putExtra(SYSTOLIC, cardioStats.getSystolicPressure());
-        intent.putExtra(DIASTOLIC, cardioStats.getDiastolicPressure());
-        intent.putExtra(BPM, cardioStats.getBpm());
-        intent.putExtra(DATETIME, cardioStats.getDateTime().toString());
-        intent.putExtra(COMMENT, cardioStats.getComment());
+    public static void updateIntentStats(Intent intent, CardioStats cs) {
+        Log.d(TAG, "updateIntentStats: "+cs.toString());
+        intent.putExtra(SYSTOLIC, cs.getSystolicPressure());
+        intent.putExtra(DIASTOLIC, cs.getDiastolicPressure());
+        intent.putExtra(BPM, cs.getBpm());
+        intent.putExtra(DATETIME, cs.getDateTime().toString());
+        intent.putExtra(COMMENT, cs.getComment());
     }
 
     private void debugStats(LocalDateTime dateTime) {
@@ -228,10 +234,11 @@ public class AddCardioStatActivity extends AppCompatActivity {
     public void returnResult() {
         if (!checkValidations()) return;
 
-        setStats();
+        updateStats();
         Log.d(TAG, "returnResult: class:"+cardioStats.toString());
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        updateIntentStats(intent);
+        updateIntentStats(intent, cardioStats);
+        intent.putExtra(CardioListAdapter.POSITION,position);
         setResult(Activity.RESULT_OK, intent);
         finish();
     }

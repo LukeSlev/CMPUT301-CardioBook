@@ -4,17 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.time.LocalDateTime;
@@ -29,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
     public static final int EDIT = 2;
 
     private Context                     mContext;
+    private TextView                    emptyMessage;
     private RecyclerView                cardioRecyclerView;
     private CardioListAdapter           cardioStatsAdapter;
     private RecyclerView.LayoutManager  mLayoutManager;
@@ -60,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
         cardioStatsAdapter.setClickListener(this);
         cardioRecyclerView.setAdapter(cardioStatsAdapter);
 
+        emptyMessage();
+
+        emptyMessage = (TextView) findViewById(R.id.emptyMessage);
         // Button to be used to add entries
         FloatingActionButton addCardioButton = (FloatingActionButton) findViewById(R.id.fab);
         addCardioButton.setOnClickListener(new View.OnClickListener() {
@@ -72,39 +73,57 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
         });
     }
 
-    protected void setStats(Intent intent) {
-        int position = 0;
+    private void emptyMessage(){
+        if ( cardioStats.size() == 0 ) {
+            emptyMessage.setVisibility(View.VISIBLE);
+        } else {
+            emptyMessage.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public static CardioStats setStats(Intent intent) {
         int systolic = intent.getIntExtra(AddCardioStatActivity.SYSTOLIC,-1);
         int diastolic = intent.getIntExtra(AddCardioStatActivity.DIASTOLIC,-1);
         int bpm = intent.getIntExtra(AddCardioStatActivity.BPM,-1);
         LocalDateTime dateTime = LocalDateTime.parse(intent.getStringExtra(AddCardioStatActivity.DATETIME));
         String comment = intent.getStringExtra(AddCardioStatActivity.COMMENT);
-        Log.d(TAG, "setStats: " + comment);
-        CardioStats cs = new CardioStats(dateTime,systolic,diastolic,bpm,comment);
-        if (cs == null) {
-            Log.d(TAG, "setStats: FAAKKKKKK");
-        } else {
-            cardioStats.add(position,cs);
-        }
+
+        return new CardioStats(dateTime,systolic,diastolic,bpm,comment);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
+        CardioStats cs;
         // Check which request it is that we're responding to
         if (requestCode == NEW) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                Toast.makeText(mContext,"Back from that NEWNEW",Toast.LENGTH_SHORT).show();
-                setStats(resultIntent);
+                cs = setStats(resultIntent);
+                if (cs == null) {
+                    Log.d(TAG, "setStats: Error");
+                } else {
+                    cardioStats.add(cs);
+                }
                 Log.d(TAG, "onActivityResult: Added new stat");
-                cardioStatsAdapter.notifyItemInserted(0);
-                cardioRecyclerView.scrollToPosition(0);
+                Toast.makeText(mContext,"Added new stat",Toast.LENGTH_SHORT).show();
+                cardioStatsAdapter.notifyItemInserted(cardioStats.size()-1);
+                cardioRecyclerView.scrollToPosition(cardioStats.size()-1);
 
             }
         } else if (requestCode == EDIT) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                Toast.makeText(mContext,"Back from that EDIT",Toast.LENGTH_SHORT).show();
+                int position = resultIntent.getIntExtra(CardioListAdapter.POSITION,0);
+                cs = setStats(resultIntent);
+                if (cs == null) {
+                    Log.d(TAG, "setStats: Error");
+                } else {
+                    cardioStats.set(position,cs);
+                }
+                Log.d(TAG, "onActivityResult: Added new stat");
+                Toast.makeText(mContext,"Added new stat",Toast.LENGTH_SHORT).show();
+                cardioStatsAdapter.notifyItemChanged(position);
+                cardioRecyclerView.scrollToPosition(position);
             }
         }
     }

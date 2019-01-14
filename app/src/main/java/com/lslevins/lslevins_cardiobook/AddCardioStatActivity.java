@@ -45,6 +45,7 @@ public class AddCardioStatActivity extends AppCompatActivity {
     private CheckBox dateCheckBox;
     private CheckBox timeCheckBox;
 
+    private DataStorage dataStorage;
     private CardioStats cardioStats = new CardioStats();
     public DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
@@ -55,6 +56,7 @@ public class AddCardioStatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_cardio_stat);
         mContext = getApplicationContext();
+        dataStorage = new DataStorage(mContext);
 
         Intent intent = getIntent();
         requestType = intent.getIntExtra(MainActivity.REQUEST_MESSAGE,-1);
@@ -82,6 +84,7 @@ public class AddCardioStatActivity extends AppCompatActivity {
         switch (requestType) {
             case MainActivity.NEW:
                 position=0;
+                submit.setText(R.string.submit);
                 break;
             case MainActivity.EDIT:
                 position = intent.getIntExtra(CardioListAdapter.POSITION,0);
@@ -94,6 +97,8 @@ public class AddCardioStatActivity extends AppCompatActivity {
                 date.setText(cardioStats.getDateTime().format(dateFormat));
                 time.setText(cardioStats.getDateTime().format(timeFormat));
                 comment.setText(cardioStats.getComment());
+
+                submit.setText(R.string.update);
                 break;
             default:
                 returnResult();

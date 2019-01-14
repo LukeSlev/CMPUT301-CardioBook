@@ -26,11 +26,12 @@ import java.util.List;
 public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.MyViewHolder> {
     private static final String TAG = "CardioListAdapter";
     public static final String POSITION = "com.lslevins.lslevins.POSITION";
+    public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private Context mContext;
+    private DataStorage dataStorage;
     private List<CardioStats> cardioStats = new ArrayList<CardioStats>();
     private ItemClickListener mClickListener;
     private ColorStateList oldColors;
-    public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -70,6 +71,7 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
     @Override
     public CardioListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
+        dataStorage = new DataStorage(mContext);
 
         // create a new view
         View v = (View) LayoutInflater.from(parent.getContext())
@@ -92,20 +94,8 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
         holder.date.setText(dateTime);
         holder.comment.setText(cardioStats.get(position).getComment());
 
-        if (cardioStats.get(position).getSystolicFlag()) {
-            holder.sysPres.setTextColor(ContextCompat.getColor(mContext, R.color.white));
-            holder.sysPres.setBackground(ContextCompat.getDrawable(mContext,R.drawable.accent_rounded_background));
-        } else {
-            holder.sysPres.setTextColor(oldColors);
-            holder.sysPres.setBackground(ContextCompat.getDrawable(mContext,R.drawable.white_rounded_background));
-        }
-        if (cardioStats.get(position).getDiastolicFlag()) {
-            holder.diaPres.setTextColor(ContextCompat.getColor(mContext, R.color.white));
-            holder.diaPres.setBackground(ContextCompat.getDrawable(mContext,R.drawable.accent_rounded_background));
-        } else {
-            holder.diaPres.setTextColor(oldColors);
-            holder.diaPres.setBackground(ContextCompat.getDrawable(mContext,R.drawable.white_rounded_background));
-        }
+        toggleBloodPressureFlags(position, holder.sysPres);
+        toggleBloodPressureFlags(position,holder.diaPres);
 
         holder.edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,8 +112,10 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick: DELETE");
+                Log.d(TAG, "onClick: DELETE:"+cardioStats.get(holder.getAdapterPosition()).toString());
                 // Remove the item on remove/button click
+                dataStorage.deleteStat(cardioStats.get(holder.getAdapterPosition()));
+
                 cardioStats.remove(holder.getAdapterPosition());
                 notifyItemRemoved(holder.getAdapterPosition());
                 notifyItemRangeChanged(holder.getAdapterPosition(),cardioStats.size());
@@ -131,6 +123,16 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
                 Toast.makeText(mContext,"Removed entry" ,Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void toggleBloodPressureFlags(int position, TextView textView) {
+        if (cardioStats.get(position).getSystolicFlag()) {
+            textView.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.accent_rounded_background));
+        } else {
+            textView.setTextColor(oldColors);
+            textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.white_rounded_background));
+        }
     }
 
     // convenience method for getting data at click position

@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
     public static final int EDIT = 2;
 
     private Context                     mContext;
+    private DataStorage                 dataStorage;
     private TextView                    emptyMessage;
     private RecyclerView                cardioRecyclerView;
     private CardioListAdapter           cardioStatsAdapter;
@@ -38,6 +39,12 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
         cardioStats.add(new CardioStats(LocalDateTime.now(),333,3333,33333,"sfasfasfasf"));
         cardioStats.add(new CardioStats(LocalDateTime.now(),4444,4444444,44444444,"hhashrshahr"));
         cardioStats.add(new CardioStats(LocalDateTime.now(),555,55555,55555,"Oh goodness"));
+    }
+
+    public void loadStatsData() {
+        dataStorage = new DataStorage(mContext);
+        cardioStats = dataStorage.loadStats();
+        Log.d(TAG, "loadStatsData: SIZE"+cardioStats.size());
     }
 
     @Override
@@ -53,14 +60,15 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
         cardioRecyclerView.setLayoutManager(mLayoutManager);
         cardioRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        loadStatsData();
         // specify an adapter (see also next example)
         cardioStatsAdapter = new CardioListAdapter(cardioStats);
         cardioStatsAdapter.setClickListener(this);
         cardioRecyclerView.setAdapter(cardioStatsAdapter);
+        emptyMessage = (TextView) findViewById(R.id.emptyMessage);
 
         emptyMessage();
 
-        emptyMessage = (TextView) findViewById(R.id.emptyMessage);
         // Button to be used to add entries
         FloatingActionButton addCardioButton = (FloatingActionButton) findViewById(R.id.fab);
         addCardioButton.setOnClickListener(new View.OnClickListener() {
@@ -75,8 +83,10 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
 
     private void emptyMessage(){
         if ( cardioStats.size() == 0 ) {
+            Log.d(TAG, "emptyMessage: NO STATS");
             emptyMessage.setVisibility(View.VISIBLE);
         } else {
+            Log.d(TAG, "emptyMessage: STATS");
             emptyMessage.setVisibility(View.INVISIBLE);
         }
     }
@@ -102,9 +112,12 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
                 if (cs == null) {
                     Log.d(TAG, "setStats: Error");
                 } else {
+                    Log.d(TAG, "onActivityResult: new:"+cs.toString());
                     cardioStats.add(cs);
+                    dataStorage.writeToFile(cardioStats);
                 }
-                Log.d(TAG, "onActivityResult: Added new stat");
+                emptyMessage();
+                Log.d(TAG, "onActivityResult: Added new stat:"+cardioStats.size());
                 Toast.makeText(mContext,"Added new stat",Toast.LENGTH_SHORT).show();
                 cardioStatsAdapter.notifyItemInserted(cardioStats.size()-1);
                 cardioRecyclerView.scrollToPosition(cardioStats.size()-1);
@@ -118,8 +131,11 @@ public class MainActivity extends AppCompatActivity implements CardioListAdapter
                 if (cs == null) {
                     Log.d(TAG, "setStats: Error");
                 } else {
+                    Log.d(TAG, "onActivityResult: edit:"+cs.toString());
                     cardioStats.set(position,cs);
+                    dataStorage.writeToFile(cardioStats);
                 }
+                emptyMessage();
                 Log.d(TAG, "onActivityResult: Added new stat");
                 Toast.makeText(mContext,"Added new stat",Toast.LENGTH_SHORT).show();
                 cardioStatsAdapter.notifyItemChanged(position);

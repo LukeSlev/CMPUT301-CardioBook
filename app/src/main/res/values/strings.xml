@@ -5,4 +5,7 @@
     <string name="beats_per_minute">BPM</string>
     <string name="comment">Comment</string>
     <string name="empty_message">Your CardioBook is empty.\n Use the button below to add some measurements!</string>
+    <string name="file_name">cardiostats.txt</string>
+    <string name="submit">submit</string>
+    <string name="update">update</string>
 </resources>

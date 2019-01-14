@@ -1,5 +1,7 @@
 package com.lslevins.lslevins_cardiobook;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -8,6 +10,8 @@ import java.time.LocalDateTime;
  */
 
 public class CardioStats implements Serializable{
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     private LocalDateTime dateTime;
     private int systolicPressure;
     private int diastolicPressure;
@@ -96,5 +100,47 @@ public class CardioStats implements Serializable{
 
     public Boolean getDiastolicFlag() {
         return diastolicFlag;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (!CardioStats.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+
+        final CardioStats other = (CardioStats) obj;
+        if (getSystolicPressure() != other.getSystolicPressure()) {
+            return false;
+        }
+        if (getDiastolicPressure() != other.getDiastolicPressure()) {
+            return false;
+        }
+        if (getBpm() != other.getBpm()) {
+            return false;
+        }
+        if (!getDateTime().equals(other.getDateTime())) {
+            return false;
+        }
+        if ((getComment() == null) ? (other.getComment() != null) : !this.getComment().equals(other.getComment())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 53 * hash + getDiastolicPressure();
+        hash = 53 * hash + getSystolicPressure();
+        hash = 53 * hash + getBpm();
+        hash = 53 * hash + (getComment() != null ? getComment().hashCode() : 0);
+        hash = 53 * hash + (getDateTime().hashCode());
+
+        return hash;
     }
 }

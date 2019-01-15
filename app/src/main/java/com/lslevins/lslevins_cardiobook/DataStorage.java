@@ -17,25 +17,39 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Created by Luke Slevinsky on 2019-01-13.
+ * Utility class that takes care of all data storage. Data is stored in the filesystem in file
+ *  cardiostats.txt
+ *
+ * Ideas and code structure was based off of the GSON tutorials on their github:
+ *       https://github.com/google/gson/blob/master/UserGuide.md
+ *
+ * @author Luke Slevinsky
  */
 public class DataStorage {
     private static final String TAG = MainActivity.class.getSimpleName();
     private Context mContext;
     private Gson gson;
 
-    // Constructor
+    /**
+     * Parametrized Constructor
+     *
+     * @param context The current application context
+     */
     public DataStorage(Context context) {
         this.mContext = context;
         this.gson = new Gson();
     }
 
+    /**
+     * Method to write a list of CardioStats to the file system
+     *
+     * @param cardioStats The new list to write to the filesystem
+     */
     public void writeToFile(List<CardioStats> cardioStats) {
         String statsToWrite = gson.toJson(cardioStats);
-        File f = new File(mContext.getFilesDir(),mContext.getString(R.string.file_name));
 
         try {
-            FileOutputStream fos = new FileOutputStream(f);
+            FileOutputStream fos = mContext.openFileOutput(mContext.getString(R.string.file_name), Context.MODE_PRIVATE);
             fos.write(statsToWrite.getBytes());
             fos.close();
         } catch (FileNotFoundException e) {
@@ -45,6 +59,11 @@ public class DataStorage {
         }
     }
 
+    /**
+     * Method to load data from the filesystem
+     *
+     * @return A list of CardioStats. It is an empty list if nothing is stored
+     */
     public ArrayList<CardioStats> loadStats() {
         File f = new File(mContext.getFilesDir(),mContext.getString(R.string.file_name));
         byte[] statBytes = new byte[(int)f.length()];
@@ -69,6 +88,11 @@ public class DataStorage {
         return (cs == null) ? new ArrayList<CardioStats>() : cs;
     }
 
+    /**
+     * Method to delete and entry from the stored stats in the file system
+     *
+     * @param cardioStat The entry to be deleted
+     */
     public void deleteStat(CardioStats cardioStat) {
         ArrayList<CardioStats> cs = loadStats();
         int idx = cs.indexOf(cardioStat);
@@ -80,16 +104,9 @@ public class DataStorage {
         writeToFile(cs);
     }
 
-    public void updateStat(CardioStats cardioStats) {
-
-    }
-
-    public void addStat(CardioStats cardioStat) {
-        ArrayList<CardioStats> cs = loadStats();
-        cs.add(cardioStat);
-        writeToFile(cs);
-    }
-
+    /**
+     * Debugging method to reset the stored entries to a blank slate
+     */
     public void resetMemory(){
         ArrayList<CardioStats> cs = new ArrayList<CardioStats>();
         writeToFile(cs);

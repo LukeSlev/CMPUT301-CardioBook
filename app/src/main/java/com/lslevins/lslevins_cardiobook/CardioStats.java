@@ -6,7 +6,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * Created by Luke Slevinsky on 2019-01-10.
+ * Model used to store Cardio measurements
+ *
+ * @author Luke Slevinsky
  */
 
 public class CardioStats implements Serializable{
@@ -21,6 +23,7 @@ public class CardioStats implements Serializable{
     private Boolean systolicFlag= false;
     private Boolean diastolicFlag= false;
 
+    // Healthy ranges for blood pressures
     private int systolicLow= 90;
     private int systolicHigh= 140;
     private int diastolicLow= 60;
@@ -28,10 +31,21 @@ public class CardioStats implements Serializable{
 
 
 
-    // Constructors
 
+    /**
+     * Constructor without parameters
+     */
     public CardioStats() {}
 
+    /**
+     * Parametrized constructor
+     *
+     * @param dateTime The time of entry
+     * @param sysPres The entries systolic blood pressure
+     * @param diaPres The entries diastolic blood pressure
+     * @param bpm The entries heart rate in beats per minute
+     * @param comment The entries comment
+     */
     public CardioStats(LocalDateTime dateTime, int sysPres, int diaPres, int bpm, String comment ) {
         setBpm(bpm);
         setComment(comment);

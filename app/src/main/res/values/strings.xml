@@ -2,10 +2,17 @@
     <string name="app_name">lslevins-CardioBook</string>
     <string name="diastolic_pressure">Diastolic Pressure</string>
     <string name="systolic_pressure">Systolic Pressure</string>
+    <string name="beats_per_minute_long">Beats Per Minute</string>
     <string name="beats_per_minute">BPM</string>
     <string name="comment">Comment</string>
     <string name="empty_message">Your CardioBook is empty.\n Use the button below to add some measurements!</string>
     <string name="file_name">cardiostats.txt</string>
     <string name="submit">submit</string>
     <string name="update">update</string>
+    <string name="add_title">Fill out your details!</string>
+    <string name="year_format">yyyy-mm-dd</string>
+    <string name="time_format">hh:mm</string>
+    <string name="comments">Comments</string>
+    <string name="delete_description">Delete an entry</string>
+    <string name="edit_description">Edit an entry</string>
 </resources>

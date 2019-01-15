@@ -17,10 +17,21 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+/**
+ * Activity to add/edit CardioBook Stats
+ *
+ * This activity is used to let add or update their cadio stats in the CardioBook. Comment is the
+ *      only field that is allowed to be blank, and is at most 20 characters. The other fields
+ *      must be inputted correctly or you will not be allowed to submit an entry. Heart rate is
+ *      referred to as Beats per minute. As fields are entered correctly, the checkboxes beside
+ *      them will get checked, indicating they are ready to be added.
+ *
+ * @author Luke Slevinsky
+ */
 public class AddCardioStatActivity extends AppCompatActivity {
     public static final String TAG = AddCardioStatActivity.class.getSimpleName();
     public static final String SYSTOLIC = "SYSTOLIC";
@@ -45,18 +56,23 @@ public class AddCardioStatActivity extends AppCompatActivity {
     private CheckBox dateCheckBox;
     private CheckBox timeCheckBox;
 
-    private DataStorage dataStorage;
     private CardioStats cardioStats = new CardioStats();
     public DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
 
 
+    /**
+     * onCreate method for AddCardioStatActivity. In this method, the initial setup for the activity
+     *      is done. The view elements are assigned to variables. Based on if the Activity is
+     *      started in ADD mode or EDIT mode, different values are populated; if it is an EDIT mode
+     *      then the view is prepoulated with the values of the cardio stat that is being editted.
+     *      As well, the textEdit validators are set up.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_cardio_stat);
         mContext = getApplicationContext();
-        dataStorage = new DataStorage(mContext);
 
         Intent intent = getIntent();
         requestType = intent.getIntExtra(MainActivity.REQUEST_MESSAGE,-1);
@@ -91,6 +107,7 @@ public class AddCardioStatActivity extends AppCompatActivity {
                 cardioStats = MainActivity.setStats(intent);
                 Log.d(TAG, "onCreate: "+cardioStats.toString());
 
+                // For EDITs set up the view with the current cardioStat values
                 systolic.setText(String.format("%d", cardioStats.getSystolicPressure()));
                 diastolic.setText(String.format("%d", cardioStats.getDiastolicPressure()));
                 bpm.setText(String.format("%d", cardioStats.getBpm()));
@@ -104,7 +121,7 @@ public class AddCardioStatActivity extends AppCompatActivity {
                 returnResult();
         }
 
-        // VALIDATION
+        // Setup text VALIDATION
 
         systolic.addTextChangedListener(new TextValidator(systolic) {
             @Override public void validate(TextView textView, String text) {
@@ -173,6 +190,12 @@ public class AddCardioStatActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Method to validate Time entries in the form of hh:mm
+     *
+     * @param string The value to validate
+     * @return The result if string is valid or not
+     */
     private Boolean validTime(String string) {
         Matcher m = Pattern.compile("(\\d\\d):(\\d\\d)").matcher(string);
 
@@ -182,7 +205,7 @@ public class AddCardioStatActivity extends AppCompatActivity {
                 int hour =Integer.parseInt(m.group(1));
                 int minute = Integer.parseInt(m.group(2));
 
-                if ((hour < 0 || hour > 24) || (minute < 0 || minute > 60)) {
+                if ((hour < 0 || hour > 23) || (minute < 0 || minute > 59)) {
                     return false;
                 } else {
                     return true;
@@ -192,6 +215,9 @@ public class AddCardioStatActivity extends AppCompatActivity {
         return false;
     }
 
+    /**
+     * Method to update Activities cardioStat dataset; this is the cardioStat being created or edited
+     */
     protected void updateStats() {
         LocalDateTime dateTime = LocalDateTime.parse(date.getText().toString() + " " + time.getText().toString(), CardioListAdapter.dateFormatter);
         debugStats(dateTime);
@@ -203,6 +229,12 @@ public class AddCardioStatActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Method to update the passed in intent from the cardioStats variable
+     *
+     * @param intent The intent to update with data
+     * @param cs The CardioStats instance to pull data off of
+     */
     public static void updateIntentStats(Intent intent, CardioStats cs) {
         Log.d(TAG, "updateIntentStats: "+cs.toString());
         intent.putExtra(SYSTOLIC, cs.getSystolicPressure());
@@ -212,6 +244,9 @@ public class AddCardioStatActivity extends AppCompatActivity {
         intent.putExtra(COMMENT, cs.getComment());
     }
 
+    /**
+     * Debugging method to help see what is currently inputted in the view.
+     */
     private void debugStats(LocalDateTime dateTime) {
         Log.d(TAG, "setStats: sys:" + Integer.parseInt(systolic.getText().toString()));
         Log.d(TAG, "setStats: dia:" + diastolic.getText().toString());
@@ -221,9 +256,21 @@ public class AddCardioStatActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Helper method to determine whether an EditText field is either empty of invalid
+     *
+     * @param et the EditText field to validate
+     * @return The result of whether the field is either empty or invalid
+     */
     private Boolean errorOrEmpty(EditText et) {
         return (et.getError() != null) || (et.getText().length() == 0);
     }
+
+    /**
+     * Method that is used to validate user input in the view
+     *
+     * @return The result of whether the user inputs are valid
+     */
     private Boolean checkValidations() {
 
         if(errorOrEmpty(systolic) || errorOrEmpty(diastolic) || errorOrEmpty(bpm) ||
@@ -235,8 +282,11 @@ public class AddCardioStatActivity extends AppCompatActivity {
         }
     }
 
-    /** Called when the user taps the Send button */
+    /**
+     * Method that finishes the activity and returns to MainActivity with the new information
+     */
     public void returnResult() {
+        // Guard statement to ensure the user input is valid
         if (!checkValidations()) return;
 
         updateStats();

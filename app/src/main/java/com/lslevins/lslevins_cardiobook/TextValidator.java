@@ -5,8 +5,10 @@ import android.text.TextWatcher;
 import android.widget.TextView;
 
 /**
- * Created by Luke Slevinsky on 2019-01-13.
- * https://stackoverflow.com/questions/2763022/android-how-can-i-validate-edittext-input
+ * A simple wrapper class to simplify the TextWatcher interface
+ *
+ * The abstract class was taken from this forum post:
+ *      https://stackoverflow.com/questions/2763022/android-how-can-i-validate-edittext-input#answer-11838715
  */
 public abstract class TextValidator implements TextWatcher {
     private final TextView textView;

@@ -20,9 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Luke Slevinsky on 2019-01-10.
+ * RecyclerView Adapter for CardioStats
+ *
+ * This class is used to display CardioStats in the MainActivites RecyclerView list
+ *
+ * @author Luke Slevinsky
  */
-
 public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.MyViewHolder> {
     private static final String TAG = "CardioListAdapter";
     public static final String POSITION = "com.lslevins.lslevins.POSITION";
@@ -30,14 +33,16 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
     private Context mContext;
     private DataStorage dataStorage;
     private List<CardioStats> cardioStats = new ArrayList<CardioStats>();
-    private ItemClickListener mClickListener;
     private ColorStateList oldColors;
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        // each data item is just a string in this case
+    /**
+     * Custom View holder for CustomListAdapter
+     *
+     * This class provides a reference to the views for each data item being displayed.
+     *
+     * @author Luke Slevinsky
+     */
+    public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView sysPres, diaPres, bpm, date, comment;
         public ImageButton edit, delete;
 
@@ -53,21 +58,24 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
 
             oldColors =  sysPres.getTextColors();
 
-            v.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
         }
     }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
+    /**
+     * Constructor for the CardioListAdapter
+     *
+     * @param myDataset sets the data set for the RecyclerView
+     */
     public CardioListAdapter(List<CardioStats> myDataset) {
         cardioStats = myDataset;
     }
 
-    // Create new views (invoked by the layout manager)
+    /**
+     * onCreateViewHolder method to create new views in the view holder
+     *
+     * @param parent The parent view group
+     * @return The resulting view holder
+     */
     @Override
     public CardioListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
@@ -81,7 +89,12 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
         return vh;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
+    /**
+     * onBindViewHolder method that replaces the contents of a view
+     *
+     * @param holder The view holder
+     * @param position The position in the view holder list
+     */
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         // - get element from your dataset at this position
@@ -94,17 +107,19 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
         holder.date.setText(dateTime);
         holder.comment.setText(cardioStats.get(position).getComment());
 
-        toggleBloodPressureFlags(position, holder.sysPres);
-        toggleBloodPressureFlags(position,holder.diaPres);
+        // Set the blood pressure flags if the inputted pressures are outside of a healthy range
+        toggleBloodPressureFlags(position, holder);
 
         holder.edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: EDIT:"+holder.getAdapterPosition());
+
                 Intent intent = new Intent(mContext, AddCardioStatActivity.class);
                 intent.putExtra(MainActivity.REQUEST_MESSAGE, MainActivity.EDIT);
                 intent.putExtra(POSITION,holder.getAdapterPosition());
                 AddCardioStatActivity.updateIntentStats(intent,cardioStats.get(holder.getAdapterPosition()));
+
                 ((Activity) mContext).startActivityForResult(intent, MainActivity.EDIT);
             }
         });
@@ -115,47 +130,67 @@ public class CardioListAdapter extends RecyclerView.Adapter<CardioListAdapter.My
                 Log.d(TAG, "onClick: DELETE:"+cardioStats.get(holder.getAdapterPosition()).toString());
                 // Remove the item on remove/button click
                 dataStorage.deleteStat(cardioStats.get(holder.getAdapterPosition()));
-
                 cardioStats.remove(holder.getAdapterPosition());
+                // update the RecyclerView of deletions
                 notifyItemRemoved(holder.getAdapterPosition());
                 notifyItemRangeChanged(holder.getAdapterPosition(),cardioStats.size());
-
                 Toast.makeText(mContext,"Removed entry" ,Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void toggleBloodPressureFlags(int position, TextView textView) {
+    /**
+     * Helper method used to toggle the blood pressure flags based on if they are healthy values
+     *
+     * @param position The position of the cardioStat to check
+     * @param holder The view holder
+     */
+    private void toggleBloodPressureFlags(int position, MyViewHolder holder) {
         if (cardioStats.get(position).getSystolicFlag()) {
-            textView.setTextColor(ContextCompat.getColor(mContext, R.color.white));
-            textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.accent_rounded_background));
+            setWarningColors(holder.sysPres);
         } else {
-            textView.setTextColor(oldColors);
-            textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.white_rounded_background));
+            setNormalColors(holder.sysPres);
+        }
+
+        if (cardioStats.get(position).getDiastolicFlag()) {
+            setWarningColors(holder.diaPres);
+        } else {
+            setNormalColors(holder.diaPres);
         }
     }
 
-    // convenience method for getting data at click position
-    int getItem(int id) {
-        return cardioStats.get(id).getSystolicPressure();
+    /**
+     * Helper method to set warning colors for unhealthy blood pressures
+     *
+     * @param tv The TextView to change
+     */
+    private void setWarningColors(TextView tv) {
+        tv.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+        tv.setBackground(ContextCompat.getDrawable(mContext,R.drawable.accent_rounded_background));
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
+    /**
+     * Helper method to set warning colors for healthy blood pressures
+     *
+     * @param tv The TextView to change
+     */
+    private void setNormalColors(TextView tv) {
+        tv.setTextColor(oldColors);
+        tv.setBackground(ContextCompat.getDrawable(mContext,R.drawable.white_rounded_background));
+    }
+
+    /**
+     * Method to return the size of the cardioStats dataset
+     */
     @Override
     public int getItemCount() {
         return cardioStats.size();
     }
 
-    // allows clicks events to be caught
-    public void setClickListener(ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
-    }
 
-    // parent activity will implement this method to respond to click events
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
-    }
-
+    /**
+     * Helper method to correctly format dateTime
+     */
     private String formatDateTime(LocalDateTime ldt) {
         return ldt.format(dateFormatter);
     }

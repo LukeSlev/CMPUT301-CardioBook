@@ -1,6 +1,8 @@
 package com.lslevins.lslevins_cardiobook;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,12 +11,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Matcher;
@@ -34,11 +41,8 @@ import java.util.regex.Pattern;
  */
 public class AddCardioStatActivity extends AppCompatActivity {
     public static final String TAG = AddCardioStatActivity.class.getSimpleName();
-    public static final String SYSTOLIC = "SYSTOLIC";
-    public static final String DIASTOLIC = "DIASTOLIC";
-    public static final String DATETIME = "DATETIME";
-    public static final String COMMENT = "COMMENT";
-    public static final String BPM = "BPM";
+    public static final String STATS = "STATS";
+
 
     private Context mContext;
     private int requestType;
@@ -55,6 +59,8 @@ public class AddCardioStatActivity extends AppCompatActivity {
     private CheckBox bpmCheckBox;
     private CheckBox dateCheckBox;
     private CheckBox timeCheckBox;
+    private DatePickerDialog datePickerDialog;
+    private TimePickerDialog timePickerDialog;
 
     private CardioStats cardioStats = new CardioStats();
     public DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -121,7 +127,39 @@ public class AddCardioStatActivity extends AppCompatActivity {
                 returnResult();
         }
 
-        // Setup text VALIDATION
+        /* Set up the date picker */
+        date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LocalDate localDate = LocalDate.now();
+                datePickerDialog = new DatePickerDialog(AddCardioStatActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                date.setText(LocalDate.of(year,monthOfYear+1,dayOfMonth).format(dateFormat));
+                            }
+                        }, localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth());
+                datePickerDialog.show();
+            }
+        });
+
+        /* Set up the time picker */
+        time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LocalTime localTime = LocalTime.now();
+                timePickerDialog = new TimePickerDialog(AddCardioStatActivity.this,
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hour, int minute) {
+                                time.setText(LocalTime.of(hour,minute).format(timeFormat));
+                            }
+                        }, localTime.getHour(),localTime.getMinute(),true);
+                timePickerDialog.show();
+            }
+        });
+
+        /* Setup text VALIDATION */
 
         systolic.addTextChangedListener(new TextValidator(systolic) {
             @Override public void validate(TextView textView, String text) {
@@ -237,11 +275,9 @@ public class AddCardioStatActivity extends AppCompatActivity {
      */
     public static void updateIntentStats(Intent intent, CardioStats cs) {
         Log.d(TAG, "updateIntentStats: "+cs.toString());
-        intent.putExtra(SYSTOLIC, cs.getSystolicPressure());
-        intent.putExtra(DIASTOLIC, cs.getDiastolicPressure());
-        intent.putExtra(BPM, cs.getBpm());
-        intent.putExtra(DATETIME, cs.getDateTime().toString());
-        intent.putExtra(COMMENT, cs.getComment());
+        Gson gson = new Gson();
+
+        intent.putExtra(STATS,gson.toJson(cs));
     }
 
     /**
@@ -263,7 +299,17 @@ public class AddCardioStatActivity extends AppCompatActivity {
      * @return The result of whether the field is either empty or invalid
      */
     private Boolean errorOrEmpty(EditText et) {
-        return (et.getError() != null) || (et.getText().length() == 0);
+        return (et.getError() != null) || isEmpty(et);
+    }
+
+    /**
+     * Helper method to determine whether an EditText field is empty
+     *
+     * @param et the EditText field to validate
+     * @return The result of whether the field is empty
+     */
+    private Boolean isEmpty(EditText et) {
+        return (et.getText().length() == 0);
     }
 
     /**

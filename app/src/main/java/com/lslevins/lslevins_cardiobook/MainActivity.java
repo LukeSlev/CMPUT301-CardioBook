@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +68,7 @@ public class MainActivity extends AppCompatActivity{
      * onCreate method for the MainActivity
      *
      * Sets up important variables such as the application context mContext, the RecyclerView,
-     *      the add button and the empty list text. As well, saved stats are loaded from the
-     *      file system.
+     *      the add button.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,18 +78,8 @@ public class MainActivity extends AppCompatActivity{
 
         cardioRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
-        cardioRecyclerView.setLayoutManager(mLayoutManager);
-        cardioRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        loadStatsData();
-        // specify an adapter
-        cardioStatsAdapter = new CardioListAdapter(cardioStats);
-        cardioRecyclerView.setAdapter(cardioStatsAdapter);
         emptyMessage = (TextView) findViewById(R.id.emptyMessage);
 
-        emptyMessage();
 
         // Button to be used to add entries
         FloatingActionButton addCardioButton = (FloatingActionButton) findViewById(R.id.fab);
@@ -100,6 +91,28 @@ public class MainActivity extends AppCompatActivity{
                 startActivityForResult(intent, NEW);
             }
         });
+    }
+
+    /**
+     * onStart method for the MainActivity
+     *
+     * Sets up the RecyclerView and its adapters and also loads the stored Cardio stats
+     */
+    @Override
+    protected void onStart() {
+        // TODO Auto-generated method stub
+        super.onStart();
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        cardioRecyclerView.setLayoutManager(mLayoutManager);
+        cardioRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        loadStatsData();
+        // specify an adapter
+        cardioStatsAdapter = new CardioListAdapter(cardioStats);
+        cardioRecyclerView.setAdapter(cardioStatsAdapter);
+
+        emptyMessage();
     }
 
     /**
@@ -122,13 +135,10 @@ public class MainActivity extends AppCompatActivity{
      * @return A new instance of CardioStats with the information off the intent
      */
     public static CardioStats setStats(Intent intent) {
-        int systolic = intent.getIntExtra(AddCardioStatActivity.SYSTOLIC,-1);
-        int diastolic = intent.getIntExtra(AddCardioStatActivity.DIASTOLIC,-1);
-        int bpm = intent.getIntExtra(AddCardioStatActivity.BPM,-1);
-        LocalDateTime dateTime = LocalDateTime.parse(intent.getStringExtra(AddCardioStatActivity.DATETIME));
-        String comment = intent.getStringExtra(AddCardioStatActivity.COMMENT);
+        Gson gson = new Gson();
+        String stats = intent.getStringExtra(AddCardioStatActivity.STATS);
 
-        return new CardioStats(dateTime,systolic,diastolic,bpm,comment);
+        return gson.fromJson(stats,CardioStats.class);
     }
 
     /**
@@ -173,8 +183,8 @@ public class MainActivity extends AppCompatActivity{
                     dataStorage.writeToFile(cardioStats);
                 }
                 emptyMessage();
-                Log.d(TAG, "onActivityResult: Added new stat");
-                Toast.makeText(mContext,"Added new stat",Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onActivityResult: Updated stat");
+                Toast.makeText(mContext,"Updated stat",Toast.LENGTH_SHORT).show();
                 // notify the RecyclerView of edits
                 cardioStatsAdapter.notifyItemChanged(position);
                 cardioRecyclerView.scrollToPosition(position);

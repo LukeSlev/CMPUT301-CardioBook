@@ -74,8 +74,10 @@ public class DataStorage {
             fis.close();
         } catch (FileNotFoundException e) {
             Log.e(TAG, "writeToFile: "+e.getMessage());
+            return new ArrayList<CardioStats>();
         } catch (IOException e) {
             Log.e(TAG, "writeToFile: "+e.getMessage());
+            throw new RuntimeException(e);
         }
 
         String cardioStats = new String(statBytes);
